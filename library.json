@@ -1,0 +1,12 @@
+{
+    "id": "{04E421E3-3C0D-3B51-D0FD-DB668F1C050C}",
+    "name": "EVCC",
+    "author": "Hermann Dötsch",
+    "url": "https://github.com/symcode/EVCC",
+    "compatibility": {
+        "version": "5.5"
+    },
+    "version": "1.0",
+    "build": 0,
+    "date": 0
+}

@@ -1,0 +1,16 @@
+{
+    "id": "{07CC9933-921B-EE22-158B-F6632866AED5}",
+    "name": "EVCC",
+    "type": 1,
+    "vendor": "EVCC",
+    "aliases": [],
+    "parentRequirements": [],
+    "childRequirements": [
+        "{2CEFFA91-698B-84FC-27EC-51CFC3D59376}"
+    ],
+    "implemented": [
+        "{42C1F7F7-FE65-C175-C082-0D9DBA5676A8}"
+    ],
+    "prefix": "EVCC",
+    "url": "https://github.com/symcode/EVCC"
+}
