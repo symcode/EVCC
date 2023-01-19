@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 define('__ROOT__', dirname(dirname(__FILE__)));
 define('__MODULE__', dirname(__FILE__));
 
@@ -20,7 +18,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
  *
  */
 
-	class EVCC extends IPSModule
+	class EVCC extends Module
 	{
         use InstanceHelper;
         public $data = [];
