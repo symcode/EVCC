@@ -1,34 +1,195 @@
 <?php
 
 declare(strict_types=1);
+
+define('__ROOT__', dirname(dirname(__FILE__)));
+define('__MODULE__', dirname(__FILE__));
+
+require_once(__ROOT__ . '/libs/helpers/autoload.php');
+require_once(__MODULE__ . '/EVCCRegister.php');
+
+/**
+ * Class VictronModbus
+ * IP-Symcon Victron Modbus Module
+ *
+ * @version     0.1
+ * @category    Symcon
+ * @package     EVCC
+ * @author      Hermann Dötsch <info@doetsch-hermann.de>
+ * @link        https://github.com/symcode/EVCC
+ *
+ */
+
 	class EVCC extends IPSModule
 	{
-		public function Create()
+        use InstanceHelper;
+        public $data = [];
+        private $update = true;
+        private $applied = false;
+        protected $profile_mappings = [];
+        protected $archive_mappings = [];
+
+        public function Create()
 		{
 			//Never delete this line!
 			parent::Create();
+
+            // register public properties
+            $this->RegisterPropertyString('ip', '');
+            $this->RegisterPropertyInteger('port', 7070);
+            $this->RegisterPropertyInteger('interval', 10);
+
+            // register timers
+            $this->RegisterTimer('UpdateData', 0, $this->_getPrefix() . '_UpdateValues($_IPS[\'TARGET\'], false);');
 		}
 
-		public function Destroy()
-		{
-			//Never delete this line!
-			parent::Destroy();
-		}
+        /**
+         * execute, when kernel is ready
+         */
+        protected function onKernelReady()
+        {
+            $this->applied = true;
 
-		public function ApplyChanges()
-		{
-			//Never delete this line!
-			parent::ApplyChanges();
-		}
+            // update timer
+            $this->SetTimerInterval('UpdateData', $this->ReadPropertyInteger('interval') * 1000);
 
-		public function ForwardData($JSONString)
-		{
-			$data = json_decode($JSONString);
-			IPS_LogMessage('IO FRWD', utf8_decode($data->Buffer));
-		}
+            // $this->SaveData();
 
-		public function Send(string $Text)
-		{
-			$this->SendDataToChildren(json_encode(['DataID' => '{2CEFFA91-698B-84FC-27EC-51CFC3D59376}', 'Buffer' => $Text]));
-		}
-	}
+        }
+        /**
+         * Read config
+         */
+        private function ReadConfig()
+        {
+            // read config
+            $this->ip = $this->ReadPropertyString('ip');
+            $this->port = $this->ReadPropertyInteger('port');
+
+            // check config
+            if (!$this->ip || !$this->port) {
+                exit(-1);
+            }
+
+            // create EVCC instance
+            if ($this->ip && $this->port) {
+
+
+                // check register on apply changes in configuration
+                if ($this->applied) {
+                    try {
+                        // Curl Prozedur
+                    } catch (Exception $e) {
+                        $this->SetStatus(202);
+                        exit(-1);
+                    }
+                }
+            }
+
+            // status ok
+            $this->SetStatus(102);
+        }
+
+        /**
+         * Update everything
+         */
+        public function Update()
+        {
+            $this->UpdateValues();
+        }
+        /**
+         * read & update update registers
+         * @param bool $applied
+         */
+        public function UpdateValues($applied = false)
+        {
+
+            $this->update = 'values';
+            $this->ReadData(EVCCRegister::value_addresses);
+
+        }
+
+        /**
+         * read & update device registers EVCC_UpdateDevice
+         * @param bool $applied
+         */
+        /**
+         * save data to variables
+         */
+        public function SaveData()
+        {
+            // loop data and create variables
+            $position = ($this->update == 'values') ? count(EVCCRegister::value_addresses) - 1 : 0;
+            foreach ($this->data AS $key => $value) {
+                $this->CreateVariableByIdentifier([
+                    'parent_id' => $this->InstanceID,
+                    'name' => $key,
+                    'value' => $value,
+                    'position' => $position
+                ]);
+                $position++;
+            }
+        }
+
+
+        /**
+         * Api to EVCC
+         * @param string $request
+         * @return array
+         */
+        public function Api($request)
+        {
+            // build url
+            $url = 'http://'.$host.'/api';
+
+            // default data
+            $data = [];
+
+            // curl options
+            $curlOptions = [
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => [
+                    'Authorization: Bearer ' . $this->token,
+                    'Content-Type: application/json',
+                    'Connection: keep-alive',
+                    'Accept-Encoding: gzip',
+                    'User-Agent: okhttp/3.2.0'
+                ]
+            ];
+
+            // call api
+            $ch = curl_init($url);
+            curl_setopt_array($ch, $curlOptions);
+            $links = curl_exec($ch);
+
+            // get links
+            if ($links = json_decode($links, true)) {
+
+                #var_dump($links);
+                #exit;
+
+                /**
+                 * $links = [
+                    'currentReadings' => $links['_links']['currentReadings']['href'],
+                    'consumption' => $links['_links']['consumption']['href'],
+                    'profile' => $links['_links']['profile']['href'],
+                    'consumptionCurrentMonth' => $links['_links']['consumptionCurrentMonth']['href']
+                ];
+                 */
+
+                if (isset($links[$request])) {
+                    curl_setopt($ch, CURLOPT_URL, $links[$request]);
+
+                    $result = curl_exec($ch);
+                    $data = json_decode($result, true);
+                }
+            }
+
+            // close curl
+            curl_close($ch);
+
+            // return data
+            return $data;
+        }
+
+    }

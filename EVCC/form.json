@@ -1,5 +1,70 @@
 {
-    "elements": [],
-    "actions": [],
-    "status": []
+    "elements": [
+        {
+            "type": "Label",
+            "label": "___ [ Module Settiungs ] _______________________________________________________________________________"
+        },
+        {
+            "name": "ip",
+            "type": "ValidationTextBox",
+            "caption": "IP Address"
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "port",
+            "caption": "TCP Port"
+        },
+        {
+            "type": "Label",
+            "label": "Interval, when all values will updating."
+        },
+        {
+            "type": "IntervalBox",
+            "name": "interval",
+            "caption": "Seconds"
+        },
+        {
+            "type": "Label",
+            "label": "___ [ Logging ] ________________________________________________________________________________________"
+        },
+        {
+            "type": "CheckBox",
+            "name": "log",
+            "caption": "enable logging"
+        }
+    ],
+    "status": [
+        {
+            "code": 101,
+            "icon": "inactive",
+            "caption": "Please enter the ip address and the tcp port of your EVCC device."
+        },
+        {
+            "code": 102,
+            "icon": "active",
+            "caption": "Connection has been established."
+        },
+        {
+            "code": 201,
+            "icon": "error",
+            "caption": "Error: Please enter the ip address and the tcp port of your EVCC device."
+        },
+        {
+            "code": 202,
+            "icon": "error",
+            "caption": "Error: Could not read data from your EVCC device."
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "label": "Read Device",
+            "onClick": "EVCC_UpdateDevice($id, true);"
+        },
+        {
+            "type": "Button",
+            "label": "Update Values",
+            "onClick": "EVCC_UpdateValues($id, true);"
+        }
+    ]
 }
