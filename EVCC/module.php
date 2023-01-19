@@ -196,51 +196,19 @@ require_once(__MODULE__ . '/EVCCRegister.php');
             // default data
             $data = [];
 
-            // curl options
-            $curlOptions = [
-                CURLOPT_TIMEOUT => 10,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => [
-                    // 'Authorization: Bearer ' . $this->token,
-                    'Content-Type: application/json',
-                    'Connection: keep-alive',
-                    'Accept-Encoding: gzip',
-                    'User-Agent: okhttp/3.2.0'
-                ]
-            ];
-
             // call api
-            $ch = curl_init($url);
-            curl_setopt_array($ch, $curlOptions);
-            $links = curl_exec($ch);
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-            // get links
-            if ($links = json_decode($links, true)) {
-
-                #var_dump($links);
-                #exit;
-
-                /**
-                 * $links = [
-                    'currentReadings' => $links['_links']['currentReadings']['href'],
-                    'consumption' => $links['_links']['consumption']['href'],
-                    'profile' => $links['_links']['profile']['href'],
-                    'consumptionCurrentMonth' => $links['_links']['consumptionCurrentMonth']['href']
-                ];
-                 */
-
-                if (isset($links[$request])) {
-                    curl_setopt($ch, CURLOPT_URL, $links[$request]);
-
-                    $result = curl_exec($ch);
-                    $data = json_decode($result, true);
-                    print_r($data);
-                    $this->_log($data);
-                }
-            }
+            $data = curl_exec($curl);
 
             // close curl
-            curl_close($ch);
+            curl_close($curl);
+
+            print_r($data);
+            // get links
+
 
             // return data
             return $data;
