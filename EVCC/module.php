@@ -184,8 +184,12 @@ require_once(__MODULE__ . '/EVCCRegister.php');
          */
         public function Api($request)
         {
+            // read config
+            $this->ip = $this->ReadPropertyString('ip');
+            $this->port = $this->ReadPropertyInteger('port');
+
             // build url
-            $url = 'http://'.$ip.':'.$port.'/api'.'/'.$request;
+            $url = 'http://'.$this->ip.':'.$this->port.'/api'.'/'.$request;
             $this->_log($url);
 
             // default data
