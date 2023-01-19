@@ -36,6 +36,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
             $this->RegisterPropertyString('ip', '');
             $this->RegisterPropertyInteger('port', 7070);
             $this->RegisterPropertyInteger('interval', 10);
+            $this->RegisterPropertyBoolean("log", false);
 
             // register timers
             $this->RegisterTimer('UpdateData', 0, $this->_getPrefix() . '_UpdateValues($_IPS[\'TARGET\'], false);');
@@ -142,7 +143,8 @@ require_once(__MODULE__ . '/EVCCRegister.php');
                     }
 
                     // read register
-                    $data = $this->Api('state');
+                    $value = $this->Api('state');
+                    print_r($value);
 
                     // continue if value is still an array
                     if (is_array($value)) {
@@ -183,7 +185,8 @@ require_once(__MODULE__ . '/EVCCRegister.php');
         public function Api($request)
         {
             // build url
-            $url = 'http://'.$host.'/api';
+            $url = 'http://'.$ip.':'.$port.'/api'.''/.$request;
+            $this->_log($url);
 
             // default data
             $data = [];
@@ -193,7 +196,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
                 CURLOPT_TIMEOUT => 10,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HTTPHEADER => [
-                    'Authorization: Bearer ' . $this->token,
+                    // 'Authorization: Bearer ' . $this->token,
                     'Content-Type: application/json',
                     'Connection: keep-alive',
                     'Accept-Encoding: gzip',
@@ -226,6 +229,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
 
                     $result = curl_exec($ch);
                     $data = json_decode($result, true);
+                    $this->_log($data);
                 }
             }
 
