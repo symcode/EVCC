@@ -189,7 +189,8 @@ require_once(__MODULE__ . '/EVCCRegister.php');
             $this->port = $this->ReadPropertyInteger('port');
 
             // build url
-            $url = 'http://'.$this->ip.':'.$this->port.'/api'.'/'.$request;
+            $url = 'http://'.$this->ip.':'.$this->port.'/api/'.$request;
+            print_r($url);
             $this->_log($url);
 
             // default data
@@ -233,6 +234,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
 
                     $result = curl_exec($ch);
                     $data = json_decode($result, true);
+                    print_r($data);
                     $this->_log($data);
                 }
             }
