@@ -185,7 +185,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
         public function Api($request)
         {
             // build url
-            $url = 'http://'.$ip.':'.$port.'/api'.''/.$request;
+            $url = 'http://'.$ip.':'.$port.'/api'.'/'.$request;
             $this->_log($url);
 
             // default data

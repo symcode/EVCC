@@ -58,11 +58,6 @@
     "actions": [
         {
             "type": "Button",
-            "label": "Read Device",
-            "onClick": "EVCC_UpdateDevice($id, true);"
-        },
-        {
-            "type": "Button",
             "label": "Update Values",
             "onClick": "EVCC_UpdateValues($id, true);"
         }
