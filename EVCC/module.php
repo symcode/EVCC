@@ -36,7 +36,7 @@ require_once(__MODULE__ . '/EVCCRegister.php');
             $this->RegisterPropertyString('ip', '');
             $this->RegisterPropertyInteger('port', 7070);
             $this->RegisterPropertyInteger('interval', 10);
-            $this->RegisterPropertyBoolean("log", false);
+            // $this->RegisterPropertyBoolean("log", false);
 
             // register timers
             $this->RegisterTimer('UpdateData', 0, $this->_getPrefix() . '_UpdateValues($_IPS[\'TARGET\'], false);');
