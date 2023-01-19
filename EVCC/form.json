@@ -2,7 +2,7 @@
     "elements": [
         {
             "type": "Label",
-            "label": "___ [ Module Settiungs ] _______________________________________________________________________________"
+            "label": "___ [ Module Settings ] ________________________________________________________________________________"
         },
         {
             "name": "ip",
@@ -12,7 +12,7 @@
         {
             "type": "NumberSpinner",
             "name": "port",
-            "caption": "TCP Port"
+            "caption": "HTTP Port"
         },
         {
             "type": "Label",

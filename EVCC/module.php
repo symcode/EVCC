@@ -128,6 +128,52 @@ require_once(__MODULE__ . '/EVCCRegister.php');
             }
         }
 
+        private function ReadData(array $addresses)
+        {
+            // read config
+            $this->ReadConfig();
+
+            // read data
+            foreach ($addresses AS $address => $config) {
+                try {
+                    // wait some time before continue
+                    if (count($addresses) > 2) {
+                        IPS_Sleep(200);
+                    }
+
+                    // read register
+                    $data = $this->Api('state');
+
+                    // continue if value is still an array
+                    if (is_array($value)) {
+                        continue;
+                    }
+
+                    // map value
+                    if (isset($config['mapping'][$value])) {
+                        $value = $this->Translate($config['mapping'][$value]);
+                    }
+
+                    // set profile
+                    if (isset($config['profile']) && !isset($this->profile_mappings[$config['name']])) {
+                        $this->profile_mappings[$config['name']] = $config['profile'];
+                    }
+
+                    // set archive
+                    if (isset($config['archive'])) {
+                        $this->archive_mappings[$config['name']] = $config['archive'];
+                    }
+
+                    // append data
+                    $this->data[$config['name']] = $value;
+                } catch (Exception $e) {
+                }
+            }
+
+            // save data
+            $this->SaveData();
+        }
+
 
         /**
          * Api to EVCC
